@@ -12,6 +12,7 @@ All notable changes to Payola will be documented in this file.
 
 ### Enhancements
 - Improve error handling in subscription_form_onestep.js
+- Add client side validation to subscription_form_onestep.js
 - Unpegged Stripe gem and stripe-ruby-mock. #255
 - Take optional `stripe_customer_id` when creating a sale. #183
 - Clean up error target HTML attributes. #198
