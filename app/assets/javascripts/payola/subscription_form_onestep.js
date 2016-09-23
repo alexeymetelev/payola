@@ -40,7 +40,7 @@ var PayolaOnestepSubscriptionForm = {
                 url: action,
                 data: form.serialize(),
                 success: function(data) { PayolaOnestepSubscriptionForm.poll(form, 60, data.guid, base_path); },
-                error: function(data) { PayolaOnestepSubscriptionForm.showError(form, jQuery.parseJSON(data.responseText).error); }
+                error: PayolaOnestepSubscriptionForm.errorHandler(form)
             });
         }
     },
@@ -56,17 +56,26 @@ var PayolaOnestepSubscriptionForm = {
                 setTimeout(function() { PayolaOnestepSubscriptionForm.poll(form, num_retries_left - 1, guid, base_path); }, 500);
             }
         };
-        var errorHandler = function(jqXHR){
-            PayolaOnestepSubscriptionForm.showError(form, jQuery.parseJSON(jqXHR.responseText).error);
-        };
 
         $.ajax({
             type: 'GET',
             dataType: 'json',
             url: base_path + '/subscription_status/' + guid,
             success: handler,
-            error: errorHandler
+            error: PayolaOnestepSubscriptionForm.errorHandler(form)
         });
+    },
+
+    errorHandler: function(form) {
+        return function(jqXHR) {
+            var errorMessage;
+            if (jqXHR.status === 0 || jqXHR.status === 500) {
+                errorMessage = 'Server is unavailable, please try later';
+            } else {
+                errorMessage = $.parseJSON(jqXHR.responseText).error;
+            }
+            PayolaOnestepSubscriptionForm.showError(form, errorMessage);
+        };
     },
 
     showError: function(form, message) {
